@@ -1,0 +1,377 @@
+/* https://mycolor.space/?hex=%2300C2FF&sub=1 */
+:root {
+  --bg-color: #E6F4F1;
+  --fg-color: #364954;
+  
+  --ac0-color: #00C2FF;
+  --ac1-color: #009AD5;
+  --ac2-color: #0074AC;
+  --ac3-color: #005185;
+  --ac4-color: #002F60;
+
+  --base-scale6-color: #AD2370;
+  --base-scale5-color: #D74364;
+  --base-scale4-color: #F36C57;
+  --base-scale3-color: #FF9A4F;
+  --base-scale2-color: #FFC954;
+  --base-scale1-color: #F9F871;
+  --base-scale0-color: #44C08A;
+
+
+  --neutral-color: rgba(154, 174, 187, .1);
+  --neutral2-color: rgba(154, 174, 187, .5);
+  --chart-invisible-color: #dbeae9;
+}
+
+@keyframes arrow {
+  0% {
+    color: var(--ac0-color);
+    transform: translate3d(0, -50%, 0);
+  }
+  20% {
+    color: var(--ac1-color);
+    transform: translate3d(0, -50%, 0);
+  }
+  40% {
+    color: var(--ac2-color);
+    transform: translate3d(5px, -50%, 0);
+  }
+  50% {
+    color: var(--ac2-color);
+    transform: translate3d(0, -50%, 0);
+  }
+  60% {
+    color: var(--ac3-color);
+    transform: translate3d(0, -50%, 0);
+  }
+  80% {
+    color: var(--ac4-color);
+    transform: translate3d(5px, -50%, 0);
+  }
+  100% {
+    color: var(--ac3-color);
+    transform: translate3d(0, -50%, 0);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: var(--ac0-color);
+}
+
+.level-neutral {
+  background: var(--neutral-color) !important;
+}
+.level-0 {
+  background: var(--base-scale0-color) !important;
+}
+.level-1 {
+  background: var(--base-scale3-color) !important;
+}
+.level-2 {
+  background: var(--base-scale4-color) !important;
+}
+.level-3 {
+  background: var(--base-scale5-color) !important;
+  color: #fff;
+}
+.level-4 {
+  background: var(--base-scale6-color) !important;
+  color: #fff;
+}
+
+body {
+  background: var(--bg-color);
+  color: var(--fg-color);
+  font-family: Montserrat, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  margin: 0;
+  padding: 0;
+}
+
+.page-header {
+  display: block;
+  min-height: 40px;
+  margin: 20px 0;
+  width: 100%;
+}
+
+@media screen and (min-width:768px) {
+  .page-header {
+    margin: 40px 0;
+    min-height: 80px;
+  }
+}
+
+.page-header h1 {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 2px;
+  margin: 0 0 5px 0;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+@media screen and (min-width:768px) {
+  .page-header h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+}
+
+.page-header h2 {
+  font-size: 16px;
+  line-height: 1;
+}
+
+@media screen and (min-width:768px) {
+  .page-header h2 {
+    font-size: 22px;
+  }
+}
+
+.page-title {
+  margin: 0 0 20px 0;
+}
+
+.page-title h2 {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  margin: 0;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+@media screen and (min-width:768px) {
+  .page-title h2 {
+    font-size: 18px;
+  }
+}
+
+.page-title-light h2 {
+  font-size: 10px;
+  font-weight: 200;
+}
+
+.page-text {
+  margin: 0 40px 40px 40px;
+}
+
+@media screen and (min-width:960px) {
+  .page-text {
+    margin: 0 auto 40px auto;
+    width: 900px;
+  }
+}
+
+@media screen and (min-width:1280px) {
+  .page-text {
+    margin: 0 auto 40px auto;
+    width: 1200px;
+  }
+}
+
+.page-text p {
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 0 0 20px 0;
+}
+
+.page-text h4 {
+  font-size: 14px;
+  margin: 10px 0;
+}
+
+.page-text strong {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.page-text p:last-child {
+  margin-bottom: 0;
+}
+.page-text p:empty {
+  display: none;
+}
+
+.stationId {
+  border: 1px solid var(--fg-color);
+  border-radius: 50%;
+  display: inline-block;
+  font-family: 'Fira Mono', monospace;
+  font-size: 10px;
+  font-weight: 400;
+  height: 14px;
+  line-height: 12px;
+  text-align: center;
+  vertical-align: middle;
+  width: 14px;
+}
+
+.page-charts {
+  display: block;
+  margin: 0 0 40px 0;
+  overflow: hidden;
+}
+
+@media screen and (min-width:1280px) {
+  .page-charts {
+    margin: 0 auto 40px auto;
+    max-width: 1600px;
+    width: 100%;
+  }
+}
+
+.page-chart-title h2 {
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  margin: 0 0 20px 0;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+  width: auto;
+}
+
+@media screen and (min-width:768px) {
+  .page-chart-title h2 {
+    font-size: 12px;
+  }
+}
+
+.page-chart {
+  height: auto;
+  margin: 0 0 10px 0;
+  overflow: hidden;
+}
+
+.page-chart {
+  margin-bottom: 40px;
+}
+
+
+.page-footer {
+  background: var(--fg-color);
+  color: var(--bg-color);
+  display: block;
+  height: auto;
+  margin-top: 80px;
+  padding: 60px 0 40px 0;
+  width: auto;
+}
+
+.page-footer .wrapper {
+   display: block;
+   padding: 60px 40px 0 40px;
+}
+
+@media screen and (min-width:768px) {
+  .page-footer .wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 auto;
+    padding: 60px 0 0 0;
+    width: auto;
+  }
+}
+
+@media screen and (min-width:960px) {
+  .page-footer .wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 auto;
+    padding: 60px 0 0 0;
+    width: 940px;
+  }
+}
+
+@media screen and (min-width:1280px) {
+  .page-footer .wrapper {
+    width: 1280px;
+  }
+}
+
+.page-footer .column {
+  display: block;
+  padding: 0 0 40px 0;
+}
+
+@media screen and (min-width:768px) {
+  .page-footer .column {
+    flex: 0 0 50%;
+    padding: 0 40px 40px 40px;
+  }
+}
+
+@media screen and (min-width:960px) {
+  .page-footer .column {
+    padding: 0 20px 40px 20px;
+  }
+}
+
+
+@media screen and (min-width:768px) {
+  .page-footer .column:first-child {
+    flex: 0 0 100%;
+  }
+}
+
+.page-footer h3 {
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.page-footer h3 a {
+  color: var(--bg-color);
+  text-decoration: none;
+}
+
+.page-footer h3 img {
+  display: inline-block;
+  height: 18px;
+  object-fit: contain;
+  vertical-align: middle;
+  width: 18px;
+}
+
+.page-footer h3 a:hover {
+  background: transparent;
+  box-shadow: none;
+  color: var(--ac0-color);
+  text-decoration: none;
+}
+
+.page-footer ul, li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.page-footer strong {
+  font-weight: 200;
+}
+
+.page-social {
+  display: flex;
+  justify-content: center;
+}
+
+.page-social .social-button {
+  flex: 0 1 auto;
+  padding: 0 10px;
+}
+
+@media screen and (min-width:768px) {
+  .page-social .social-button {
+    padding: 0 20px;
+  }
+}

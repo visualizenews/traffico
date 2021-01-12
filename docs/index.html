@@ -1,10 +1,225 @@
 <!doctype html>
 <html>
   <head>
-    <title>Il Traffico di Milano</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=5,user-scalable=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Il Traffico di Milano - Visualize News</title>
+    <meta name="description" content="Tutti i dati sulla qualità dell'aria a Milano raccolti da Arpa Lombardia visualizzati in un modo sempliice e accessibile.">
+    <meta name="keywords" content="inquinamento, inquinamento atmosferico, milano, lombardia, dati, data visualization, datavisualization, dataviz, mappe, maps, mapping, pollution, milan, italy">
+    <link rel="apple-touch-icon" sizes="57x57" href="/icons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/icons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/icons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/icons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/icons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/icons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/icons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="512x512"  href="/icons/android-icon-512x512.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/icons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/icons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#E6F4F1">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Il traffico di Milano">
+    <meta property="og:description" content="Una visualizzazione dei dati sul traffico a Milano raccolti tramite il progetto Open Data del Comune di Milano.">
+    <meta property="og:url" content="https://traffico.mia.mi.it/">
+    <meta property="og:site_name" content="Il Traffico di Milano di Visualize News">
+    <meta property="og:image" content="https://traffico.mia.mi.it/ogimage.png">
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@visualizenews" />
+    <meta name="twitter:title" content="Il traffico di Milano" />
+    <meta name="twitter:description" content="Una visualizzazione dei dati sul traffico a Milano raccolti tramite il progetto Open Data del Comune di Milano." />
+    <meta name="twitter:image" content="https://traffico.mia.mi.it/ogimage.png" />
+    
+    <style>
+      @keyframes ball {
+        0% {
+          background-color: #44C08A;
+        }
+        20% {
+          background-color: #FFC954;
+        }
+        40% {
+          background-color: #FF9A4F;
+        }
+        60% {
+          background-color: #F36C57;
+        }
+        80% {
+          background-color: #D74364;
+        }
+        100% {
+          background-color: #AD2370;
+        }
+      }
+
+      #loading {
+        background: #E6F4F1;
+        bottom: 0;
+        display: none;
+        height: auto;
+        left: 0;
+        opacity: 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        transition: opacity .5s .25s ease-in;
+        width: auto;
+        z-index: -1;
+      }
+
+      #loading div {
+        left: 50%;
+        max-width: 250px;
+        position: absolute;
+        top: 50%;
+        transform: translate3d(-50%, -50%, 0);
+      }
+
+      #loading  div:before {
+        animation-direction: alternate;
+        animation-duration: 2.5s;
+        animation-iteration-count: infinite;
+        animation-name: ball;
+        animation-timing-function: ease-in-out;
+        background-color: #44C08A;
+        border-radius: 50%;
+        content: '';
+        display: block;
+        height: 280px;
+        left: 50%;
+        mix-blend-mode: multiply;
+        position: absolute;
+        top: 50%;
+        transform: translate3d(-50%, -50%, 0);
+        transition: background-color .25s ease-in;
+        width: 280px;
+      }
+
+      #loading h1 {
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: 2px;
+        margin: 0 0 10px 0;
+        text-align: center;
+        text-transform: uppercase;
+      }
+
+      #loading p {
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 1.5;
+        margin: 0;
+        text-align: center;
+      }
+
+      body.loading #loading {
+        display: block;
+        opacity: 1;
+        z-index: 999999;
+      }
+
+      body.loading.exit #loading {
+        display: block;
+        opacity: 0;
+        z-index: 999999;
+      }
+
+      body.loading.exit #loading div:before {
+        background-color: #44C08A;
+      }
+    </style>
+
   </head>
-  <body>
-    <h1>Il Traffico di Milano</h1>
-    <p>Stiamo lavorando a questo progetto, se ti va nel frattempo puoi guardare com'è <a href="https://aria.mia.mi.it">L'Aria di Milano</a>.</p>
+  <body class="loading">
+    <div id="fb-root"></div>
+    <div id="loading">
+      <div>
+        <h1>Il Traffico di Milano</h1>
+        <p id="loadingMessage">Stiamo caricando i dati storici sul traffico a Milano.</p>
+      </div>
+    </div>
+    <header class="page-header">
+      <h1>Il traffico di Milano</h1>
+      <div class="page-title page-title-light"><h2>Dati storici 2011 - 2019</h2></div>
+    </header>
+    <div class="page-text">
+      <h3>Il Traffico di Milano</h3>
+      <p>Stiamo lavorando a questo progetto, se ti va, nel frattempo, puoi guardare com'è <a href="https://aria.mia.mi.it">L'Aria di Milano</a>.</p>
+    </div>
+
+    <footer class="page-footer">
+      <div class="wrapper">
+        <div class="column">
+          <h3>Fonti</h3>
+          <p>I dati provengono dalle API <a href="http://dati.comune.milano.it" targe="_comune">Open Data del Comune di Milano</a>.
+    
+          <p>Ultimo aggiornamento dei dati: 12/01/2021.</p>
+        </div>
+        <div class="column">
+          <h3>Copyright</h3>
+          <p>© 2020 <a href="https://visualize.news" target="_visualize">Visualize.News</a> – Tutti i diritti riservati. Tutte le immagini e i testi © dei rispettivi proprietari. Questo sito è stato progettato e realizzato da <a href="https://simonelippolis.com" target="_simone">Simone Lippolis</a>.</p>
+          <h3>Termini del servizio</h3>
+          <p>Tutte le analisi sono fornite "as-is" ("così come sono"), senza alcuna garanzia esplicita o implicita della loro correttezza.</p>
+          <h3>Privacy policy</h3>
+          <p>Questo sito non salva alcun cookie, né utilizza alcun altro tipo di tecnologia di tracking. Usiamo <a href="https://www.google.com/analytics">Google Analytics</a> per soli scopi statistici. È possibile che <a href="https://www.google.com/analytics">Google Analytics</a> salvi cookies o utilizzi altre tecnologie di tracking; questi dati, in ogni caso, non sono a noi accessibili.</p>
+          <p><strong>Nessun dato</strong> (inclusi IP address, Host name, Broswer signature) <strong>viene salvato per alucn motivo su nostri server</strong>.</p>
+        </div>
+        <div class="column">
+          <h3><a href="https://visualize.news" target="_visualize"><img src="./vn.png" loading="lazy" alt="Visualize News Logo"> Visualize News</a></h3>
+          
+          <p>Siamo un collettivo di computational designer appassionati di data visualization.</p>
+          
+          <h3>Contatti</h3>
+          <ul>
+            <li>Web: <a href="https://visualize.news" target="_visualize">Visualize.News</a></li>
+            <li>Twitter: <a href="https://twitter.com/visualizenews" target="_twitter">@visualizenews</a></li>
+            <li>Instagram: <a href="https://instagram.com/visualizenews" target="_twitter">@visualizenews</a></li>
+            <li>Medium: <a href="https://medium.com/visualize-news" target="_medium">@visualize.news</a></li>
+          </ul>
+          
+          <h3>Altri progetti</h3>
+          <ul>
+            <li><a href="https://aria.mia.mi.it" target="_aria">L'Aria di Milano</a></li>
+            <li><a href="https://coronavirus.visualize.news" target="_virus">Corona Virus in Italy</a></li>
+            <li><a href="https://matteointour.visualize.news" target="_elezioni">Matteo in Tour</a></li>
+            <li><a href="https://india.visualize.news" target="_elezioni">Lok Sabha Elections</a></li>
+            <li><a href="https://elezioni.io" target="_elezioni">Elezioni.io</a></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+  
+  
+  
+  
+  
+  
+    <script src="https://cdn.jsdelivr.net/combine/npm/moment@2.24.0,npm/moment@2.24.0/locale/it.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/6.3.1/d3.min.js" integrity="sha512-9H86d5lhAwgf2/u29K4N5G6pZThNOojI8kMT4nT4NHvVR02cM85M06KJRQXkI0XgQWBpzQyIyr8LVomyu1AQdw==" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Montserrat:wght@200;400;700;900&display=swap" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <script src="script.js"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8Z8ESH4F8B"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-8Z8ESH4F8B');
+    </script>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/it_IT/sdk.js#xfbml=1&version=v7.0"></script>
   </body>
 </html>
