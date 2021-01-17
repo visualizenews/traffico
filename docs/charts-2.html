@@ -195,11 +195,22 @@
             })();
             const total = Math.floor((data[k].pagamento + data[k].gratis) / RATIO);
 
-            ctx.fillStyle = 'rgba(0, 194, 255, .25)';
+            ctx.fillStyle = 'rgba(0, 194, 255, .05)';
             ctx.strokeStyle = null;
             ctx.strokeWidth = 0;
             
-            for (let i = 0; i < total; i += 1) {
+            for (let i = 0; i < Math.floor(data[k].pagamento / RATIO); i += 1) {
+              const y = Math.floor(Math.random() * (HEIGHT - MARGINS[0] - MARGINS[2])) + MARGINS[0];
+              ctx.beginPath();
+              ctx.arc(x, y, 2, 0, 2 * Math.PI);
+              ctx.fill();
+            }
+
+            ctx.fillStyle = 'rgba(255, 0, 194, .05)';
+            ctx.strokeStyle = null;
+            ctx.strokeWidth = 0;
+            
+            for (let i = 0; i < Math.floor(data[k].gratis / RATIO); i += 1) {
               const y = Math.floor(Math.random() * (HEIGHT - MARGINS[0] - MARGINS[2])) + MARGINS[0];
               ctx.beginPath();
               ctx.arc(x, y, 2, 0, 2 * Math.PI);
@@ -216,7 +227,7 @@
         };
 
         const getData = () => {
-          fetch('./data/areac_per_settimana_ora_anno_2014.json')
+          fetch('./data/areac_per_settimana_ora_anno_2020.json')
             .then(response => {
               if (!response.ok) {
                 throw new Error('Server Error while Loading Data');
