@@ -55,6 +55,16 @@ const MARGINS = [30, 30, 20, 20];
           throw new Error('Error Loading Data', e);
         }
       );
+    fetch(document.querySelector('#corporate').getAttribute('href'))
+      .then(response => response.text())
+      .then(content => {
+        document.querySelector('#container-corporate').innerHTML =content;
+      });
+    fetch(document.querySelector('#legal').getAttribute('href'))
+      .then(response => response.text())
+      .then(content => {
+        document.querySelector('#container-legal').innerHTML =content;
+      });
   }
   const ready = () => {
     if (document.readyState != 'loading') {

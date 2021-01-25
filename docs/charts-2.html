@@ -139,6 +139,31 @@
       body.loading.exit #loading div:before {
         background-color: #44C08A;
       }
+
+
+      .year {
+        align-items: center;
+        display: flex;
+        flex-wrap: nowrap;
+        margin: 0;
+      }
+
+      .year > div {
+        flex: 0 0 100px;
+        height: auto;
+        margin: 0;
+        padding: 0 20px 0 0;
+        text-align: right;
+      }
+      
+      .year .chart-container {
+        border-bottom: 1px solid transparent;
+        flex: 0 0 auto;
+        height: 50px;
+        margin: 0;
+        padding: 0;
+        text-align: left;
+      }
     </style>
   </head>
   <body>
@@ -148,9 +173,9 @@
       <div class="page-title page-title-light"><h2>Dati storici 2011 - 2019</h2></div>
     </header>
 
-    <div style="display: flex; flex-wrap: wrap;" id ="container"></div>
+    <div style="display: flex; flex-direction: column; flex-wrap: wrap;" id ="container"></div>
     <hr />
-    <div style="display: flex;" id="images"></div>
+    <div id="images"></div>
   
   
   
@@ -169,10 +194,22 @@
           "00.30": 1,
         }
 
+        const SOURCES = [
+          { u: './data/areac_per_settimana_ora_anno_2012.json', a: 2012, },
+          { u: './data/areac_per_settimana_ora_anno_2013.json', a: 2013, },
+          { u: './data/areac_per_settimana_ora_anno_2014.json', a: 2014, },
+          { u: './data/areac_per_settimana_ora_anno_2015.json', a: 2015, },
+          { u: './data/areac_per_settimana_ora_anno_2016.json', a: 2016, },
+          { u: './data/areac_per_settimana_ora_anno_2017.json', a: 2017, },
+          { u: './data/areac_per_settimana_ora_anno_2018.json', a: 2018, },
+          { u: './data/areac_per_settimana_ora_anno_2019.json', a: 2019, },
+          { u: './data/areac_per_settimana_ora_anno_2020.json', a: 2020, },
+        ];
+
         const WIDTH = 2048;
-        const HEIGHT = 800;
-        const MARGINS = [20, 20, 20, 20];
-        const RATIO = 100;
+        const HEIGHT = 100;
+        const MARGINS = [0, 4, 0, 4];
+        const RATIO = 1000;
         const DAYS = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
 
         const drawChart = (data, id, ctx) => {
@@ -218,42 +255,54 @@
             }
           });
           
-          ctx.font = '700 28px Montserrat';
-          ctx.textBaseline = 'bottom';
-          ctx.fillStyle = '#002F60',
-          ctx.fillText(`${DAYS[parseInt(id, 10)].toUpperCase()}`, baseX, (Math.floor(HEIGHT / 2)));
-          ctx.textBaseline = 'top';
-          ctx.fillText(`00:00`, baseX, (Math.floor(HEIGHT / 2)));
+          // ctx.font = '700 28px Montserrat';
+          // ctx.textBaseline = 'bottom';
+          // ctx.fillStyle = '#002F60',
+          // ctx.fillText(`${DAYS[parseInt(id, 10)].toUpperCase()}`, baseX, (Math.floor(HEIGHT / 2)));
+          // ctx.textBaseline = 'top';
+          // ctx.fillText(`00:00`, baseX, (Math.floor(HEIGHT / 2)));
         };
 
         const getData = () => {
-          fetch('./data/areac_per_settimana_ora_anno_2020.json')
-            .then(response => {
-              if (!response.ok) {
-                throw new Error('Server Error while Loading Data');
-              }
-              return response.json();
-            })
-            .then(jsonData => {
-              console.log(jsonData);
-              const keys = Object.keys(jsonData);
-              
-              const container = d3.select('#container');
-              const cnvs = container.append('canvas')
-                .attr('width', WIDTH)
-                .attr('height', HEIGHT)
-                .attr('style', `width: ${WIDTH/2}px; height: ${HEIGHT/2}px`);
-              const ctx = cnvs.node().getContext('2d');
-              keys.forEach((k) => {
-                drawChart(jsonData[k], k, ctx);
-              });
+          SOURCES.forEach((s) => {
+            fetch(s.u)
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Server Error while Loading Data');
+                }
+                return response.json();
+              })
+              .then(jsonData => {
+                const keys = Object.keys(jsonData);
+                const wrapper = d3.select('#container')
+                  .append('div')
+                  .attr('class', 'year')
+                  .style('order', s.a);
 
-              const img = cnvs.node().toDataURL();
-              const image = d3.select('#images')
-                .append('img')
-                .attr('src', img);
-            });
-        }
+                wrapper.append('div')
+                  .text(s.a);
+                const container = wrapper
+                  .append('div')
+                  .attr('class', 'chart-container')
+                  .attr('id', `#container-${s.a}`);
+                const cnvs = container.append('canvas')
+                  .attr('width', WIDTH)
+                  .attr('height', HEIGHT)
+                  .attr('style', `width: ${WIDTH/2}px; height: ${HEIGHT/2}px`);
+                const ctx = cnvs.node().getContext('2d');
+                keys.forEach((k) => {
+                  drawChart(jsonData[k], k, ctx);
+                });
+
+                const img = cnvs.node().toDataURL();
+                const image = d3.select('#images')
+                  .append('img')
+                  .attr('id', s.a)
+                  .attr('name', s.a)
+                  .attr('src', img);
+              });
+        });
+      };
 
       const ready = (fn) => {
         if (document.readyState != 'loading'){
@@ -268,15 +317,5 @@
 
       })();
     </script>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8Z8ESH4F8B"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-8Z8ESH4F8B');
-    </script>
-    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/it_IT/sdk.js#xfbml=1&version=v7.0"></script>
   </body>
 </html>

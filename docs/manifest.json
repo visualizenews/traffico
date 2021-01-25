@@ -1,5 +1,9 @@
 {
- "name": "Traffico",
+ "manifest_version": 0.1,
+ "name": "Il Traffico di Milano",
+ "short_name": "Traffico",
+ "start_url": "https://traffico.mia.mi.it",
+ "background_color": "#E6F4F1",
  "icons": [
   {
    "src": "\/icons\/android-icon-36x36.png",
