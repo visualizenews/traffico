@@ -1,0 +1,424 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=5,user-scalable=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Il Traffico di Milano - Visualize News</title>
+    <meta name="description" content="Tutti i dati sulla qualità dell'aria a Milano raccolti da Arpa Lombardia visualizzati in un modo sempliice e accessibile.">
+    <meta name="keywords" content="inquinamento, inquinamento atmosferico, milano, lombardia, dati, data visualization, datavisualization, dataviz, mappe, maps, mapping, pollution, milan, italy">
+    <link rel="apple-touch-icon" sizes="57x57" href="/icons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/icons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/icons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/icons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/icons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/icons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/icons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="512x512"  href="/icons/android-icon-512x512.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/icons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/icons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#E6F4F1">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Il traffico di Milano">
+    <meta property="og:description" content="Una visualizzazione dei dati sul traffico a Milano raccolti tramite il progetto Open Data del Comune di Milano.">
+    <meta property="og:url" content="https://traffico.mia.mi.it/">
+    <meta property="og:site_name" content="Il Traffico di Milano di Visualize News">
+    <meta property="og:image" content="https://traffico.mia.mi.it/ogimage.png">
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@visualizenews" />
+    <meta name="twitter:title" content="Il traffico di Milano" />
+    <meta name="twitter:description" content="Una visualizzazione dei dati sul traffico a Milano raccolti tramite il progetto Open Data del Comune di Milano." />
+    <meta name="twitter:image" content="https://traffico.mia.mi.it/ogimage.png" />
+    
+    <style>
+      @keyframes ball {
+        0% {
+          background-color: #44C08A;
+        }
+        20% {
+          background-color: #FFC954;
+        }
+        40% {
+          background-color: #FF9A4F;
+        }
+        60% {
+          background-color: #F36C57;
+        }
+        80% {
+          background-color: #D74364;
+        }
+        100% {
+          background-color: #AD2370;
+        }
+      }
+
+      #loading {
+        background: #E6F4F1;
+        bottom: 0;
+        display: none;
+        height: auto;
+        left: 0;
+        opacity: 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        transition: opacity .5s .25s ease-in;
+        width: auto;
+        z-index: -1;
+      }
+
+      #loading div {
+        left: 50%;
+        max-width: 250px;
+        position: absolute;
+        top: 50%;
+        transform: translate3d(-50%, -50%, 0);
+      }
+
+      #loading  div:before {
+        animation-direction: alternate;
+        animation-duration: 2.5s;
+        animation-iteration-count: infinite;
+        animation-name: ball;
+        animation-timing-function: ease-in-out;
+        background-color: #44C08A;
+        border-radius: 50%;
+        content: '';
+        display: block;
+        height: 280px;
+        left: 50%;
+        mix-blend-mode: multiply;
+        position: absolute;
+        top: 50%;
+        transform: translate3d(-50%, -50%, 0);
+        transition: background-color .25s ease-in;
+        width: 280px;
+      }
+
+      #loading h1 {
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: 2px;
+        margin: 0 0 10px 0;
+        text-align: center;
+        text-transform: uppercase;
+      }
+
+      #loading p {
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 1.5;
+        margin: 0;
+        text-align: center;
+      }
+
+      body.loading #loading {
+        display: block;
+        opacity: 1;
+        z-index: 999999;
+      }
+
+      body.loading.exit #loading {
+        display: block;
+        opacity: 0;
+        z-index: 999999;
+      }
+
+      body.loading.exit #loading div:before {
+        background-color: #44C08A;
+      }
+
+
+      .year {
+        align-items: center;
+        display: flex;
+        flex-wrap: nowrap;
+        margin: 0;
+      }
+
+      .year > div {
+        flex: 0 0 100px;
+        font-size: 14px;
+        font-weight: 600;
+        height: auto;
+        margin: 0;
+        padding: 0 20px 0 0;
+        text-align: right;
+      }
+      
+      .year .chart-container {
+        border-bottom: 1px solid transparent;
+        flex: 0 0 auto;
+        height: 50px;
+        margin: 0;
+        padding: 0;
+        text-align: left;
+      }
+
+      .charts-container {
+        display: flex;
+        flex-direction: column;flex-wrap: wrap;
+      }
+
+      .charts-wrapper {
+        display: block;
+        padding-top: 40px;
+        position: relative;
+        width: 1024px;
+      }
+
+      .day {
+        font-size: 12px;
+        font-weight: 600;
+        left: 100px;
+        line-height: 20px;
+        position: absolute;
+        top: 0;
+        transform: translate3d(-50%, 0, 0);
+      }
+
+      .day.day-1 {
+        left: calc(100px + (100% / 7 * 1));
+      }
+
+      .day.day-2 {
+        left: calc(100px + (100% / 7 * 2));
+      }
+
+      .day.day-3 {
+        left: calc(100px + (100% / 7 * 3));
+      }
+
+      .day.day-4 {
+        left: calc(100px + (100% / 7 * 4));
+      }
+
+      .day.day-5 {
+        left: calc(100px + (100% / 7 * 5));
+      }
+
+      .day.day-6 {
+        left: calc(100px + (100% / 7 * 6));
+      }
+
+      .hour {
+        border-left: 1px dashed var(--fg-color);
+        bottom: 0;
+        font-size: 10px;
+        font-weight: 400;
+        left: 100px;
+        line-height: 20px;
+        position: absolute;
+        top: 38px;
+      }
+
+      .hour span {
+        display: block;
+        position: absolute;
+        transform: translate3d(-50%, -18px, 0);
+      }
+
+      .hour-0-12 {
+        left: calc(100px + (100% / 14 * 1));
+      }
+
+      .hour-1-0 {
+        left: calc(100px + (100% / 14 * 2));
+      }
+
+      .hour-1-12 {
+        left: calc(100px + (100% / 14 * 3));
+      }
+
+      .hour-2-0 {
+        left: calc(100px + (100% / 14 * 4));
+      }
+
+      .hour-2-12 {
+        left: calc(100px + (100% / 14 * 5));
+      }
+
+      .hour-3-0 {
+        left: calc(100px + (100% / 14 * 6));
+      }
+
+      .hour-3-12 {
+        left: calc(100px + (100% / 14 * 7));
+      }
+
+      .hour-4-0 {
+        left: calc(100px + (100% / 14 * 8));
+      }
+
+      .hour-4-12 {
+        left: calc(100px + (100% / 14 * 9));
+      }
+
+      .hour-5-0 {
+        left: calc(100px + (100% / 14 * 10));
+      }
+
+      .hour-5-12 {
+        left: calc(100px + (100% / 14 * 11));
+      }
+
+      .hour-6-0 {
+        left: calc(100px + (100% / 14 * 12));
+      }
+
+      .hour-6-12 {
+        left: calc(100px + (100% / 14 * 13));
+      }
+    </style>
+  </head>
+  <body>
+    <div id="fb-root"></div>
+    <header class="page-header">
+      <h1>Il traffico di Milano</h1>
+      <div class="page-title page-title-light"><h2>Dati storici 2011 - 2019</h2></div>
+    </header>
+
+    <div class="charts-wrapper">
+      <div class="charts-container" id ="container"></div>
+    </div>
+    <hr />
+    <div id="images" style="line-height: 0;"></div>
+  
+  
+  
+  
+  
+  
+    <script src="https://cdn.jsdelivr.net/combine/npm/moment@2.24.0,npm/moment@2.24.0/locale/it.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/6.3.1/d3.min.js" integrity="sha512-9H86d5lhAwgf2/u29K4N5G6pZThNOojI8kMT4nT4NHvVR02cM85M06KJRQXkI0XgQWBpzQyIyr8LVomyu1AQdw==" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Montserrat:wght@200;400;700;900&display=swap" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <!-- <script src="script.js"></script> -->
+    <script>
+      (() => {
+        const XPOS = {
+          "00.00": 0,
+          "00.30": 1,
+        }
+
+        const SOURCES = [
+          { u: './data/areac_per_settimana_ora_anno_2012.json', a: 2012, },
+          { u: './data/areac_per_settimana_ora_anno_2013.json', a: 2013, },
+          { u: './data/areac_per_settimana_ora_anno_2014.json', a: 2014, },
+          { u: './data/areac_per_settimana_ora_anno_2015.json', a: 2015, },
+          { u: './data/areac_per_settimana_ora_anno_2016.json', a: 2016, },
+          { u: './data/areac_per_settimana_ora_anno_2017.json', a: 2017, },
+          { u: './data/areac_per_settimana_ora_anno_2018.json', a: 2018, },
+          { u: './data/areac_per_settimana_ora_anno_2019.json', a: 2019, },
+          { u: './data/areac_per_settimana_ora_anno_2020.json', a: 2020, },
+        ];
+
+        const WIDTH = 2048;
+        const HEIGHT = 900;
+        const MARGINS = [0, 0, 0, 0];
+        const RATIO = 1000;
+        const DAYS = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
+
+        const drawChart = (data, id, ctx, a) => {
+          const baseX = MARGINS[3] + (((WIDTH - MARGINS[1] - MARGINS[3]) / (48 * 7)) * parseInt(id, 10) * 48);
+          const baseY = (a - 2012) * 100;
+          
+          const keys = Object.keys(data);
+          keys.forEach((k) => {
+            const [a, b] = k.split('.');
+            const x = baseX + (((parseInt(a, 10) * 2) + (parseInt(b, 10) === 0 ? 0 : 1)) * ((WIDTH - MARGINS[1] - MARGINS[3]) / (48 * 7)));
+            const total = Math.floor((data[k].pagamento + data[k].gratis) / RATIO);
+
+            ctx.fillStyle = 'rgba(0, 194, 255, .05)';
+            ctx.strokeStyle = null;
+            ctx.strokeWidth = 0;
+            
+            for (let i = 0; i < Math.floor(data[k].pagamento / RATIO); i += 1) {
+              const y = baseY + Math.floor(Math.random() * ((HEIGHT / 9) - MARGINS[0] - MARGINS[2])) + MARGINS[0];
+              ctx.beginPath();
+              ctx.arc(x, y, 2, 0, 2 * Math.PI);
+              ctx.fill();
+            }
+
+            ctx.fillStyle = 'rgba(255, 0, 194, .05)';
+            ctx.strokeStyle = null;
+            ctx.strokeWidth = 0;
+            
+            for (let i = 0; i < Math.floor(data[k].gratis / RATIO); i += 1) {
+              const y = baseY + Math.floor(Math.random() * ((HEIGHT / 9) - MARGINS[0] - MARGINS[2])) + MARGINS[0];
+              ctx.beginPath();
+              ctx.arc(x, y, 2, 0, 2 * Math.PI);
+              ctx.fill();
+            }
+          });
+          
+          // ctx.font = '700 28px Montserrat';
+          // ctx.textBaseline = 'bottom';
+          // ctx.fillStyle = '#002F60',
+          // ctx.fillText(`${DAYS[parseInt(id, 10)].toUpperCase()}`, baseX, (Math.floor(HEIGHT / 2)));
+          // ctx.textBaseline = 'top';
+          // ctx.fillText(`00:00`, baseX, (Math.floor(HEIGHT / 2)));
+        };
+
+        
+        const wrapper = d3.select('#container');
+        const cnvs = wrapper.append('canvas')
+          .attr('width', WIDTH)
+          .attr('height', HEIGHT)
+          .attr('style', `width: ${WIDTH/2}px; height: ${HEIGHT/2}px`);
+        const ctx = cnvs.node().getContext('2d');
+
+        const getData = () => {
+          SOURCES.forEach((s) => {
+            fetch(s.u)
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Server Error while Loading Data');
+                }
+                return response.json();
+              })
+              .then(jsonData => {
+                const keys = Object.keys(jsonData);
+                keys.forEach((k) => {
+                  drawChart(jsonData[k], k, ctx, s.a);
+                });
+
+                const img = cnvs.node().toDataURL();
+                const image = d3.select('#images')
+                  .append('img')
+                  .attr('id', s.a)
+                  .attr('name', s.a)
+                  .attr('src', img)
+                  .attr('width', 260)
+                  .attr('height', 30);
+              });
+        });
+      };
+
+      const ready = (fn) => {
+        if (document.readyState != 'loading'){
+          fn();
+        } else {
+          document.addEventListener('DOMContentLoaded', fn);
+        }
+      }
+
+      ready(getData);
+
+
+      })();
+    </script>
+  </body>
+</html>

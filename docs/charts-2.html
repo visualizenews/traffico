@@ -150,6 +150,8 @@
 
       .year > div {
         flex: 0 0 100px;
+        font-size: 14px;
+        font-weight: 600;
         height: auto;
         margin: 0;
         padding: 0 20px 0 0;
@@ -164,6 +166,121 @@
         padding: 0;
         text-align: left;
       }
+
+      .charts-container {
+        display: flex;
+        flex-direction: column;flex-wrap: wrap;
+      }
+
+      .charts-wrapper {
+        display: block;
+        padding-top: 40px;
+        position: relative;
+        width: 1024px;
+      }
+
+      .day {
+        font-size: 12px;
+        font-weight: 600;
+        left: 100px;
+        line-height: 20px;
+        position: absolute;
+        top: 0;
+        transform: translate3d(-50%, 0, 0);
+      }
+
+      .day.day-1 {
+        left: calc(100px + (100% / 7 * 1));
+      }
+
+      .day.day-2 {
+        left: calc(100px + (100% / 7 * 2));
+      }
+
+      .day.day-3 {
+        left: calc(100px + (100% / 7 * 3));
+      }
+
+      .day.day-4 {
+        left: calc(100px + (100% / 7 * 4));
+      }
+
+      .day.day-5 {
+        left: calc(100px + (100% / 7 * 5));
+      }
+
+      .day.day-6 {
+        left: calc(100px + (100% / 7 * 6));
+      }
+
+      .hour {
+        border-left: 1px dashed var(--fg-color);
+        bottom: 0;
+        font-size: 10px;
+        font-weight: 400;
+        left: 100px;
+        line-height: 20px;
+        position: absolute;
+        top: 38px;
+      }
+
+      .hour span {
+        display: block;
+        position: absolute;
+        transform: translate3d(-50%, -18px, 0);
+      }
+
+      .hour-0-12 {
+        left: calc(100px + (100% / 14 * 1));
+      }
+
+      .hour-1-0 {
+        left: calc(100px + (100% / 14 * 2));
+      }
+
+      .hour-1-12 {
+        left: calc(100px + (100% / 14 * 3));
+      }
+
+      .hour-2-0 {
+        left: calc(100px + (100% / 14 * 4));
+      }
+
+      .hour-2-12 {
+        left: calc(100px + (100% / 14 * 5));
+      }
+
+      .hour-3-0 {
+        left: calc(100px + (100% / 14 * 6));
+      }
+
+      .hour-3-12 {
+        left: calc(100px + (100% / 14 * 7));
+      }
+
+      .hour-4-0 {
+        left: calc(100px + (100% / 14 * 8));
+      }
+
+      .hour-4-12 {
+        left: calc(100px + (100% / 14 * 9));
+      }
+
+      .hour-5-0 {
+        left: calc(100px + (100% / 14 * 10));
+      }
+
+      .hour-5-12 {
+        left: calc(100px + (100% / 14 * 11));
+      }
+
+      .hour-6-0 {
+        left: calc(100px + (100% / 14 * 12));
+      }
+
+      .hour-6-12 {
+        left: calc(100px + (100% / 14 * 13));
+      }
     </style>
   </head>
   <body>
@@ -173,9 +290,34 @@
       <div class="page-title page-title-light"><h2>Dati storici 2011 - 2019</h2></div>
     </header>
 
-    <div style="display: flex; flex-direction: column; flex-wrap: wrap;" id ="container"></div>
+    <div class="charts-wrapper">
+      <div class="charts-header">
+        <div class="day day-0">Dom.</div>
+        <div class="day day-1">Lun.</div>
+        <div class="day day-2">Mar.</div>
+        <div class="day day-3">Mer.</div>
+        <div class="day day-4">Gio.</div>
+        <div class="day day-5">Ven.</div>
+        <div class="day day-6">Sab.</div>
+        <div class="hour hour-0-0"><span>00:00</span></div>
+        <div class="hour hour-0-12"><span>12:00</span></div>
+        <div class="hour hour-1-0"><span>00:00</span></div>
+        <div class="hour hour-1-12"><span>12:00</span></div>
+        <div class="hour hour-2-0"><span>00:00</span></div>
+        <div class="hour hour-2-12"><span>12:00</span></div>
+        <div class="hour hour-3-0"><span>00:00</span></div>
+        <div class="hour hour-3-12"><span>12:00</span></div>
+        <div class="hour hour-4-0"><span>00:00</span></div>
+        <div class="hour hour-4-12"><span>12:00</span></div>
+        <div class="hour hour-5-0"><span>00:00</span></div>
+        <div class="hour hour-5-12"><span>12:00</span></div>
+        <div class="hour hour-6-0"><span>00:00</span></div>
+        <div class="hour hour-6-12"><span>12:00</span></div>
+      </div>
+      <div class="charts-container" id ="container"></div>
+    </div>
     <hr />
-    <div id="images"></div>
+    <div id="images" style="line-height: 0;"></div>
   
   
   
@@ -208,7 +350,7 @@
 
         const WIDTH = 2048;
         const HEIGHT = 100;
-        const MARGINS = [0, 4, 0, 4];
+        const MARGINS = [0, 0, 0, 0];
         const RATIO = 1000;
         const DAYS = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
 
@@ -218,18 +360,7 @@
           const keys = Object.keys(data);
           keys.forEach((k) => {
             const [a, b] = k.split('.');
-            const x = baseX + (((parseInt(a, 10) * 2) + (parseInt(b, 10) === 0 ? 0 : 1)) * ((WIDTH - MARGINS[1] - MARGINS[3]) / (48 * 7))) + (() => {
-              const r = Math.floor(Math.random() * 100);
-              const s = r % 3;
-              switch (s) {
-                case 0:
-                  return 0;
-                case 1:
-                  return Math.floor(Math.random() * 7) + 1;
-                case 2:
-                  return -Math.floor(Math.random() * 7) + 1;
-              }
-            })();
+            const x = baseX + (((parseInt(a, 10) * 2) + (parseInt(b, 10) === 0 ? 0 : 1)) * ((WIDTH - MARGINS[1] - MARGINS[3]) / (48 * 7)));
             const total = Math.floor((data[k].pagamento + data[k].gratis) / RATIO);
 
             ctx.fillStyle = 'rgba(0, 194, 255, .05)';
@@ -299,7 +430,11 @@
                   .append('img')
                   .attr('id', s.a)
                   .attr('name', s.a)
-                  .attr('src', img);
+                  .attr('src', img)
+                  .attr('width', 260)
+                  .attr('height', 30);
+                d3.select('#images')
+                  .append('br');
               });
         });
       };
