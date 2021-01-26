@@ -326,14 +326,15 @@
         ];
 
         const WIDTH = 2048;
-        const HEIGHT = 900;
+        const YEAR_HEIGHT = 50;
+        const HEIGHT = YEAR_HEIGHT * 9;
         const MARGINS = [0, 0, 0, 0];
-        const RATIO = 1000;
+        const RATIO = 2500;
         const DAYS = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
 
         const drawChart = (data, id, ctx, a) => {
           const baseX = MARGINS[3] + (((WIDTH - MARGINS[1] - MARGINS[3]) / (48 * 7)) * parseInt(id, 10) * 48);
-          const baseY = (a - 2012) * 100;
+          const baseY = (a - 2012) * YEAR_HEIGHT;
           
           const keys = Object.keys(data);
           keys.forEach((k) => {
@@ -346,7 +347,7 @@
             ctx.strokeWidth = 0;
             
             for (let i = 0; i < Math.floor(data[k].pagamento / RATIO); i += 1) {
-              const y = baseY + Math.floor(Math.random() * ((HEIGHT / 9) - MARGINS[0] - MARGINS[2])) + MARGINS[0];
+              const y = baseY + Math.floor(Math.random() * ((YEAR_HEIGHT) - MARGINS[0] - MARGINS[2])) + MARGINS[0];
               ctx.beginPath();
               ctx.arc(x, y, 2, 0, 2 * Math.PI);
               ctx.fill();

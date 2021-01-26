@@ -324,23 +324,52 @@
         const RATIO = 1000;
         const DAYS = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
 
-        const drawChart = (data, id, ctx, a, scale) => {
-          const baseX = MARGINS[3] + (((WIDTH - MARGINS[1] - MARGINS[3]) / (48 * 7)) * parseInt(id, 10) * 48);
-          const baseY = (a - 2012) * YEAR_HEIGHT;
-          const keys = Object.keys(data);
-          keys.forEach((k) => {
-            const [a, b] = k.split('.');
+        const drawChart = (data, ctx, y, min, max) => {
+          const baseY = ((y - 2012) * YEAR_HEIGHT) - ((y - 2012) * (YEAR_HEIGHT / 2));
+          const points = [];
+
+          const scale = d3.scaleLinear()
+                .range([baseY + YEAR_HEIGHT, baseY])
+                .domain([min, max]);
+
+          console.log(data, min, max, scale.domain(), scale.range(), scale(341406));
+
+          data.forEach((d) => {
+            const [a, b] = d.x2.split('.');
+            const baseX = MARGINS[3] + (((WIDTH - MARGINS[1] - MARGINS[3]) / (48 * 7)) * parseInt(d.x1, 10) * 48);
             const x = baseX + (((parseInt(a, 10) * 2) + (parseInt(b, 10) === 0 ? 0 : 1)) * ((WIDTH - MARGINS[1] - MARGINS[3]) / (48 * 7)));
-            const total = (data[k].pagamento + data[k].gratis);
-
-            ctx.strokeStyle = `rgba(${(data[k].pagamento > data[k].gratis) ? '0, 194, 255' : '255, 0, 194'}, ${scale(total)})`;
-            ctx.lineWidth = 4;
-
-            ctx.beginPath();
-            ctx.moveTo(x, baseY + 1);
-            ctx.lineTo(x, baseY + YEAR_HEIGHT - 1);
-            ctx.stroke();
+            points.push({
+              x,
+              y: scale(d.y),
+            });
           });
+
+          console.log(points);
+
+          const area = d3.area()
+              .x(d => d.x)
+              .y0(scale(0))
+              .y1(d => d.y)
+              .curve(d3.curveStep);
+
+          const line = d3.line()
+              .x(d => d.x)
+              .y(d => d.y)
+              .curve(d3.curveStep);
+
+          const path = area(points);
+          ctx.strokeStyle = '#002F60';
+          ctx.lineWidth = 2;
+          ctx.fillStyle = '#009AD5';
+
+          var p = new Path2D(path);
+          // ctx.stroke(p);
+          ctx.fill(p);
+
+          const path2 = line(points);
+          var p2 = new Path2D(path2);
+          ctx.stroke(p2);
+          // ctx.fill(p);
           
           // ctx.font = '700 28px Montserrat';
           // ctx.textBaseline = 'bottom';
@@ -357,6 +386,7 @@
           .attr('height', HEIGHT)
           .attr('style', `width: ${WIDTH/2}px; height: ${HEIGHT/2}px`);
         const ctx = cnvs.node().getContext('2d');
+        const data = {};
 
         const getData = () => {
           
@@ -369,30 +399,36 @@
             })
             .then(jsonData => {
               const keys = Object.keys(jsonData);
-              let max = Number.MIN_SAFE_INTEGER;
+              let max = 0;
               let min = 0;
               const allValues = [];
               keys.forEach((k) => {
+
                 const days = Object.keys(jsonData[k]);
                 days.forEach((d) => {
                   const hours = Object.keys(jsonData[k][d]);
                   hours.forEach((h) => {
-                    allValues.push(jsonData[k][d][h].gratis + jsonData[k][d][h].pagamento);
+                    if (!data[k]) {
+                      data[k] = [];
+                    }
+                    data[k].push({
+                      x1: d,
+                      x2: h,
+                      y: parseInt(jsonData[k][d][h].gratis, 10) + parseInt(jsonData[k][d][h].pagamento, 10),
+                    });
                   });
                 });
               });
-              max = Math.max(max, ...allValues);
+              
+              keys.forEach((k) => {
+                allValues.push(d3.max(data[k], d => d.y));
+              });
+              max = Math.max(...allValues);
 
-              const scale = d3.scaleLinear()
-                .range([0, 1])
-                .domain([min, max]);
+              console.log(allValues, max);
 
               keys.forEach((k) => {
-                console.log(k);
-                const days = Object.keys(jsonData[k]);
-                days.forEach((d) => {
-                  drawChart(jsonData[k][d], d, ctx, k, scale);
-                });
+                drawChart(data[k], ctx, k, min, max);
               });
 
               const img = cnvs.node().toDataURL();
